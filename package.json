@@ -1,0 +1,8 @@
+{
+  "name": "tugaskita-terpadu",
+  "version": "2.0.0",
+  "description": "Tugas, kelas, iuran, kas, dan pengingat kelas dalam satu aplikasi terpadu",
+  "main": "server.js",
+  "engines": { "node": ">=18" },
+  "scripts": { "start": "node server.js", "web": "node server.js", "test": "node test/alur.js" }
+}

@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0a6b5d" />
+    <title>TugasKita Terpadu</title>
+    <style>
+      :root {
+        --bg: #edf1ee;
+        --card: #fff;
+        --ink: #fefcfc;
+        --sub: #fdfdfd;
+        --line: #070707;
+        --ac: #f2f3f3;
+        --acink: #fff;
+        --warn: #9a5b00;
+        --warnbg: #fdf0d8;
+        --ok: #fcfefe;
+        --okbg: #d9f0e9;
+        --err: #b3261e;
+        --r: 10px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #817d7d;
+          --card: #c1cdc9;
+          --ink: #e6f0ec;
+          --sub: #060505;
+          --line: #040404;
+          --ac: #faf6f6;
+          --acink: #000000;
+          --warn: #f2b54d;
+          --warnbg: #3a2c0f;
+          --ok: #f6f8f7;
+          --okbg: #e4e6e5;
+          --err: #ff8a80;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          16px/1.5 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right)
+          env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
+      h1,
+      h2 {
+        font-family: Georgia, "Iowan Old Style", serif;
+        margin: 0;
+        line-height: 1.2;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
+      h2 {
+        font-size: 1.15rem;
+        margin-bottom: 0.6rem;
+      }
+      main {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+        min-height: 44px;
+        border-radius: var(--r);
+      }
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        padding: 0.5rem 0.75rem;
+        margin: 0.25rem 0 0.75rem;
+      }
+      label {
+        font-size: 0.9rem;
+        color: var(--sub);
+      }
+      button {
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+      }
+      button.utama {
+        background: var(--ac);
+        color: var(--acink);
+        border-color: var(--ac);
+        font-weight: 600;
+      }
+      button.link {
+        border: 0;
+        background: none;
+        color: var(--ac);
+        text-decoration: underline;
+        min-height: 44px;
+      }
+      :focus-visible {
+        outline: 3px solid var(--ac);
+        outline-offset: 2px;
+      }
+      .kartu {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+      nav {
+        display: flex;
+        gap: 0.25rem;
+        border-bottom: 2px solid var(--line);
+        margin-bottom: 1rem;
+        overflow-x: auto;
+      }
+      nav button {
+        border: 0;
+        border-radius: var(--r) var(--r) 0 0;
+        background: none;
+        color: var(--sub);
+        white-space: nowrap;
+      }
+      nav button[aria-selected="true"] {
+        color: var(--ac);
+        font-weight: 700;
+        box-shadow: inset 0 -3px var(--ac);
+      }
+      .baris {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-top: 1px solid var(--line);
+      }
+      .baris:first-child {
+        border-top: 0;
+      }
+      .baris small {
+        color: var(--sub);
+        display: block;
+      }
+      .lencana {
+        padding: 0.1rem 0.6rem;
+        border-radius: 99px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
+      .lunas {
+        background: var(--okbg);
+        color: var(--ok);
+      }
+      .belum {
+        background: var(--warnbg);
+        color: var(--warn);
+      }
+      .selesai .jdl {
+        text-decoration: line-through;
+        color: var(--sub);
+      }
+      .kosong {
+        color: var(--sub);
+        padding: 0.5rem 0;
+      }
+      .angka {
+        font-family: Georgia, serif;
+        font-size: 1.8rem;
+      }
+      .dua {
+        display: grid;
+        gap: 1rem;
+      }
+      @media (min-width: 900px) {
+        .dua {
+          grid-template-columns: 320px 1fr;
+          align-items: start;
+        }
+      }
+      #galat {
+        color: var(--err);
+        min-height: 1.5rem;
+      }
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: calc(1rem + env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        background: var(--ink);
+        color: var(--bg);
+        padding: 0.6rem 1rem;
+        border-radius: var(--r);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      #toast.tampil {
+        opacity: 1;
+      }
+      footer {
+        color: var(--sub);
+        font-size: 0.85rem;
+        text-align: center;
+        padding: 1rem;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section
+        id="auth"
+        class="kartu"
+        style="max-width: 420px; margin: 3rem auto"
+        hidden
+      >
+        <h1>TugasKita Terpadu</h1>
+        <p class="kosong">Tugas, iuran, dan kas kelas dalam satu tempat.</p>
+        <div id="fNama">
+          <label for="nama">Nama lengkap</label
+          ><input id="nama" autocomplete="name" />
+        </div>
+        <label for="email">Email</label
+        ><input id="email" type="email" autocomplete="email" />
+        <label for="sandi">Kata sandi (minimal 6 karakter)</label
+        ><input id="sandi" type="password" autocomplete="current-password" />
+        <div id="galat" role="alert"></div>
+        <button class="utama" id="kirimAuth" style="width: 100%"></button>
+        <button class="link" id="ganti" style="width: 100%"></button>
+      </section>
+
+      <div id="app" hidden>
+        <header>
+          <div>
+            <h1 id="namaKelas">TugasKita</h1>
+            <small id="kodeKelas" class="kosong"></small>
+          </div>
+          <div>
+            <select id="pilihKelas" aria-label="Pilih kelas"></select>
+            <button id="keluar">Keluar</button>
+          </div>
+        </header>
+
+        <section id="tanpaKelas" class="dua" hidden>
+          <div class="kartu">
+            <h2>Buat kelas baru</h2>
+            <label for="kNama">Nama kelas</label
+            ><input id="kNama" placeholder="Contoh: IF-3A" /><button
+              class="utama"
+              id="buatKelas"
+            >
+              Buat kelas
+            </button>
+            <p class="kosong">Pembuat kelas menjadi bendahara.</p>
+          </div>
+          <div class="kartu">
+            <h2>Gabung dengan kode</h2>
+            <label for="kKode">Kode kelas</label
+            ><input id="kKode" placeholder="6 karakter dari bendahara" /><button
+              class="utama"
+              id="gabungKelas"
+            >
+              Gabung kelas
+            </button>
+          </div>
+        </section>
+
+        <div id="isi" hidden>
+          <nav role="tablist" id="tab"></nav>
+          <section id="p-tugas" class="dua">
+            <div class="kartu">
+              <h2>Tugas baru</h2>
+              <label for="tJudul">Judul</label><input id="tJudul" /><label
+                for="tTenggat"
+                >Tenggat</label
+              ><input id="tTenggat" type="date" /><button
+                class="utama"
+                id="tambahTugas"
+              >
+                Simpan tugas
+              </button>
+              <p class="kosong">
+                Pintasan: N tugas baru, Enter simpan, Esc tutup.
+              </p>
+            </div>
+            <div class="kartu">
+              <h2>Daftar tugas</h2>
+              <div id="lTugas"></div>
+            </div>
+          </section>
+          <section id="p-iuran" class="dua" hidden>
+            <div class="kartu" id="formIuran">
+              <h2>Buat tagihan iuran</h2>
+              <label for="iJudul">Judul iuran</label
+              ><input id="iJudul" placeholder="Kas November" /><label
+                for="iNominal"
+                >Nominal (Rp)</label
+              ><input
+                id="iNominal"
+                type="number"
+                min="1"
+                inputmode="numeric"
+              /><label for="iTempo">Jatuh tempo</label
+              ><input id="iTempo" type="date" /><button
+                class="utama"
+                id="tambahIuran"
+              >
+                Tagih semua anggota
+              </button>
+            </div>
+            <div class="kartu">
+              <h2 id="jIuran">Tagihan</h2>
+              <div id="lIuran"></div>
+            </div>
+          </section>
+          <section id="p-kas" hidden>
+            <div class="kartu">
+              <h2>Kas terkumpul</h2>
+              <div class="angka" id="kMasuk"></div>
+              <p class="kosong" id="kRingkas"></p>
+            </div>
+            <div class="kartu">
+              <h2>Riwayat pemasukan</h2>
+              <div id="lKas"></div>
+            </div>
+          </section>
+          <section id="p-ping" hidden>
+            <div class="kartu">
+              <h2>Pengingat</h2>
+              <div id="lPing"></div>
+            </div>
+          </section>
+        </div>
+        <footer>Berjalan sebagai: <span id="plat"></span></footer>
+      </div>
+    </main>
+    <div id="toast" role="status"></div>
+    <script>
+      const $ = (s) => document.querySelector(s);
+      const h = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const rp = (n) =>
+        new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          maximumFractionDigits: 0,
+        }).format(n);
+      const S = {
+        token: localStorage.getItem("tk_token"),
+        kelas: [],
+        kid: localStorage.getItem("tk_kid"),
+        tab: "tugas",
+        daftar: false,
+        belumBaca: 0,
+      };
+      const TABS = [
+        ["tugas", "Tugas"],
+        ["iuran", "Iuran"],
+        ["kas", "Kas"],
+        ["ping", "Pengingat"],
+      ];
+      $("#plat").textContent = window.Capacitor
+        ? "Android (Capacitor)"
+        : /Electron/.test(navigator.userAgent)
+          ? "Desktop (Electron)"
+          : matchMedia("(display-mode: standalone)").matches
+            ? "PWA terpasang"
+            : "Web browser";
+
+      function toast(t) {
+        const e = $("#toast");
+        e.textContent = t;
+        e.classList.add("tampil");
+        setTimeout(() => e.classList.remove("tampil"), 2500);
+      }
+      async function api(m, u, b) {
+        const r = await fetch("/api" + u, {
+          method: m,
+          headers: {
+            "Content-Type": "application/json",
+            ...(S.token && { Authorization: "Bearer " + S.token }),
+          },
+          body: b ? JSON.stringify(b) : undefined,
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.status === 401 && S.token) {
+          keluar();
+        }
+        if (!r.ok) throw new Error(d.error || "Terjadi kesalahan. Coba lagi.");
+        return d;
+      }
+      const aksi =
+        (f) =>
+        async (...a) => {
+          try {
+            await f(...a);
+          } catch (e) {
+            toast(e.message);
+          }
+        };
+
+      // ----- Akun -----
+      function tampilAuth() {
+        $("#fNama").hidden = !S.daftar;
+        $("#kirimAuth").textContent = S.daftar ? "Daftar" : "Masuk";
+        $("#ganti").textContent = S.daftar
+          ? "Sudah punya akun? Masuk"
+          : "Belum punya akun? Daftar";
+        $("#galat").textContent = "";
+      }
+      $("#ganti").onclick = () => {
+        S.daftar = !S.daftar;
+        tampilAuth();
+      };
+      $("#kirimAuth").onclick = async () => {
+        try {
+          const d = await api("POST", S.daftar ? "/daftar" : "/masuk", {
+            nama: $("#nama").value,
+            email: $("#email").value,
+            sandi: $("#sandi").value,
+          });
+          S.token = d.token;
+          localStorage.setItem("tk_token", d.token);
+          mulai();
+        } catch (e) {
+          $("#galat").textContent = e.message;
+        }
+      };
+      function keluar() {
+        S.token = null;
+        localStorage.removeItem("tk_token");
+        mulai();
+      }
+      $("#keluar").onclick = keluar;
+
+      // ----- Kelas -----
+      const masukKelas = (id) => {
+        S.kid = id;
+        localStorage.setItem("tk_kid", id);
+        muatKelas();
+      };
+      $("#buatKelas").onclick = aksi(async () => {
+        const d = await api("POST", "/kelas", { nama: $("#kNama").value });
+        $("#kNama").value = "";
+        toast("Kelas dibuat. Kode: " + d.kode);
+        masukKelas(d.id);
+      });
+      $("#gabungKelas").onclick = aksi(async () => {
+        const d = await api("POST", "/kelas/gabung", {
+          kode: $("#kKode").value,
+        });
+        $("#kKode").value = "";
+        masukKelas(d.id);
+      });
+      $("#pilihKelas").onchange = (e) =>
+        e.target.value === "+"
+          ? ((S.kid = null), muatKelas())
+          : masukKelas(e.target.value);
+      const kls = () => S.kelas.find((k) => k.id === S.kid);
+      async function muatKelas() {
+        S.kelas = await api("GET", "/kelas");
+        if (!kls()) S.kid = S.kelas[0]?.id || null;
+        $("#pilihKelas").innerHTML =
+          S.kelas
+            .map(
+              (k) =>
+                `<option value="${h(k.id)}"${k.id === S.kid ? " selected" : ""}>${h(k.nama)}</option>`,
+            )
+            .join("") + '<option value="+">Buat atau gabung kelas…</option>';
+        $("#tanpaKelas").hidden = !!S.kid;
+        $("#isi").hidden = !S.kid;
+        $("#namaKelas").textContent = kls()?.nama || "TugasKita";
+        $("#kodeKelas").textContent = kls()
+          ? `Kode kelas: ${kls().kode}, ${kls().jumlah} anggota${kls().bendahara ? ", Anda bendahara" : ""}`
+          : "";
+        $("#formIuran").hidden = !kls()?.bendahara;
+        if (S.kid) segarkan();
+      }
+
+      // ----- Tab -----
+      function gambarTab() {
+        $("#tab").innerHTML = TABS.map(
+          ([k, n]) =>
+            `<button role="tab" data-k="${k}" aria-selected="${S.tab === k}">${n}${k === "ping" && S.belumBaca ? ` (${S.belumBaca})` : ""}</button>`,
+        ).join("");
+        TABS.forEach(([k]) => ($("#p-" + k).hidden = S.tab !== k));
+      }
+      $("#tab").onclick = aksi(async (e) => {
+        const k = e.target.dataset.k;
+        if (!k) return;
+        S.tab = k;
+        gambarTab();
+        if (k === "ping") {
+          await api("POST", "/pengingat/baca");
+        }
+        segarkan();
+      });
+
+      // ----- Tugas -----
+      $("#tambahTugas").onclick = aksi(async () => {
+        await api("POST", `/kelas/${S.kid}/tugas`, {
+          judul: $("#tJudul").value,
+          tenggat: $("#tTenggat").value,
+        });
+        $("#tJudul").value = "";
+        $("#tTenggat").value = "";
+        segarkan();
+      });
+      $("#lTugas").onclick = aksi(async (e) => {
+        const b = e.target.closest("[data-t]");
+        if (b) {
+          await api("POST", `/tugas/${b.dataset.t}/selesai`);
+          segarkan();
+        }
+      });
+      // ----- Iuran -----
+      $("#tambahIuran").onclick = aksi(async () => {
+        await api("POST", `/kelas/${S.kid}/iuran`, {
+          judul: $("#iJudul").value,
+          nominal: $("#iNominal").value,
+          jatuhTempo: $("#iTempo").value,
+        });
+        ["#iJudul", "#iNominal", "#iTempo"].forEach((s) => ($(s).value = ""));
+        toast("Tagihan dikirim ke semua anggota.");
+        segarkan();
+      });
+      $("#lIuran").onclick = aksi(async (e) => {
+        const b = e.target.closest("[data-b]");
+        if (b) {
+          await api("POST", `/tagihan/${b.dataset.b}/bayar`);
+          toast("Pembayaran diterima. Status: Lunas.");
+          segarkan();
+        }
+      });
+
+      // ----- Muat data & gambar -----
+      async function segarkan() {
+        if (!S.token || !S.kid) return;
+        const [tugas, tagihan, kas, ping] = await Promise.all([
+          api("GET", `/kelas/${S.kid}/tugas`),
+          api("GET", `/kelas/${S.kid}/tagihan`),
+          api("GET", `/kelas/${S.kid}/kas`),
+          api("GET", "/pengingat"),
+        ]);
+        S.belumBaca =
+          S.tab === "ping" ? 0 : ping.filter((p) => !p.dibaca).length;
+        gambarTab();
+        $("#lTugas").innerHTML = tugas.length
+          ? tugas
+              .map(
+                (t) =>
+                  `<div class="baris ${t.selesai ? "selesai" : ""}"><div><span class="jdl">${h(t.judul)}</span><small>${t.tenggat ? "Tenggat " + h(t.tenggat) : "Tanpa tenggat"}</small></div><button data-t="${h(t.id)}">${t.selesai ? "Batalkan" : "Tandai selesai"}</button></div>`,
+              )
+              .join("")
+          : '<p class="kosong">Belum ada tugas. Tambahkan tugas pertama di formulir.</p>';
+        $("#jIuran").textContent = kls().bendahara
+          ? "Semua tagihan kelas"
+          : "Tagihan Anda";
+        $("#lIuran").innerHTML = tagihan.length
+          ? tagihan
+              .map(
+                (t) =>
+                  `<div class="baris"><div>${h(t.judul)}${kls().bendahara ? " · " + h(t.nama) : ""}<small>${rp(t.nominal)}, jatuh tempo ${h(t.jatuhTempo)}</small></div>${t.status === "lunas" ? '<span class="lencana lunas">Lunas</span>' : t.milikku ? `<button class="utama" data-b="${h(t.id)}">Bayar ${rp(t.nominal)}</button>` : '<span class="lencana belum">Belum bayar</span>'}</div>`,
+              )
+              .join("")
+          : '<p class="kosong">Belum ada tagihan.</p>';
+        $("#kMasuk").textContent = rp(kas.masuk);
+        $("#kRingkas").textContent =
+          `${kas.lunas} tagihan lunas, ${kas.belum} belum dibayar (${rp(kas.tertunggak)}).`;
+        $("#lKas").innerHTML = kas.riwayat.length
+          ? kas.riwayat
+              .map(
+                (x) =>
+                  `<div class="baris"><div>${h(x.ket)}<small>${new Date(x.waktu).toLocaleString("id-ID")}</small></div><strong>${rp(x.jumlah)}</strong></div>`,
+              )
+              .join("")
+          : '<p class="kosong">Belum ada pembayaran masuk.</p>';
+        $("#lPing").innerHTML = ping.length
+          ? ping
+              .map(
+                (p) =>
+                  `<div class="baris"><div>${h(p.teks)}<small>${new Date(p.waktu).toLocaleString("id-ID")}</small></div>${p.dibaca ? "" : '<span class="lencana belum">Baru</span>'}</div>`,
+              )
+              .join("")
+          : '<p class="kosong">Belum ada pengingat.</p>';
+      }
+
+      // ----- Pintasan keyboard (laptop) -----
+      document.addEventListener("keydown", (e) => {
+        const ketik = /INPUT|SELECT|TEXTAREA/.test(
+          document.activeElement.tagName,
+        );
+        if (e.key === "Escape") document.activeElement.blur();
+        else if (e.key === "Enter" && document.activeElement.id === "tJudul")
+          $("#tambahTugas").click();
+        else if (
+          !ketik &&
+          !e.ctrlKey &&
+          !e.metaKey &&
+          e.key.toLowerCase() === "n" &&
+          S.kid &&
+          !$("#isi").hidden
+        ) {
+          S.tab = "tugas";
+          gambarTab();
+          e.preventDefault();
+          $("#tJudul").focus();
+        }
+      });
+
+      function mulai() {
+        $("#auth").hidden = !!S.token;
+        $("#app").hidden = !S.token;
+        if (S.token) muatKelas().catch(() => {});
+        else tampilAuth();
+      }
+      setInterval(() => {
+        if (!document.hidden) segarkan().catch(() => {});
+      }, 4000); // sinkron antar-perangkat
+      if ("serviceWorker" in navigator && location.protocol.startsWith("http"))
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      gambarTab();
+      mulai();
+    </script>
+  </body>
+</html>
